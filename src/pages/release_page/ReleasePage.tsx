@@ -1,10 +1,14 @@
 import { Button } from '@/components/ui/button';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FillAndPreviewPDF } from './ViewPDF';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const ReleasePage = () => {
+    const location = useLocation()
+    const { username, email } = location.state || {}
     const [showPdfViewer, setShowPdfViewer] = useState(false);
     const [view, setView] = useState(true)
+    const navigate = useNavigate()
     const qaData = {
         "_id": "670cb671eb96e6534cd889da",
         "stage": "ATLAS",
@@ -30,7 +34,12 @@ const ReleasePage = () => {
         "expirationDate": "2024-10-14T06:13:05.105Z"
     }
 
+    useEffect(() => {
+        if (username === "") {
 
+            navigate('/setting')
+        }
+    }, username)
 
     const handleViewPDF = () => {
         console.log("in handle view");
@@ -49,7 +58,8 @@ const ReleasePage = () => {
                     showPdfViewer && (
                         <div style={{ display: 'flex', alignSelf: 'center', marginTop: '20px', justifyContent: 'center' }}>
                             <FillAndPreviewPDF
-
+                                username={username}
+                                email={email}
                                 data={qaData}
 
                             />
