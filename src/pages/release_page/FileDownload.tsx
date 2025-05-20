@@ -104,8 +104,22 @@ export async function generateFilledPDF({ data, }: { data: PDFData }): Promise<U
             }
             else if (key === 'signedAt') {
                 const date = new Date(value);
+                const pad = (n: number) => String(n).padStart(2, '0');
 
-                text = `Date ${date.toLocaleDateString()} at ${date.toLocaleTimeString()}`;
+                const year = date.getFullYear();
+                const month = pad(date.getMonth() + 1);
+                const day = pad(date.getDate());
+
+                const hours = pad(date.getHours());
+                const minutes = pad(date.getMinutes());
+                const seconds = pad(date.getSeconds());
+
+
+                const offset = -date.getTimezoneOffset();
+                const offsetHours = pad(Math.floor(offset / 60));
+                const offsetMinutes = pad(offset % 60);
+
+                text = `Date ${year}:${month}:${day} ${hours}:${minutes}:${seconds} +${offsetHours}'${offsetMinutes}`;
                 firstPage.drawText(text, {
                     x,
                     y: height - y,
