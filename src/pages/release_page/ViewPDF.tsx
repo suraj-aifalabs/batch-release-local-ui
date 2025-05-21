@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
-import { saveAs } from 'file-saver';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.min?url';
-import { generateFilledPDF } from './FileDownload';
 import { Button } from '@/components/ui/button';
 import { ToastContainer, toast } from 'react-toastify';
 import { Checkbox } from "@/components/ui/checkbox"
+import axios from 'axios';
 
 interface Printer {
     name: string;
@@ -27,11 +26,17 @@ export function FillAndPreviewPDF({ username, email, data }: Props) {
     const [signed, setSigned] = useState(false)
     const [displaySign, setDisplaySign] = useState(true)
     const [checkException, setException] = useState('')
+    const [disableSign, setDisableSign] = useState(true)
     useEffect(() => {
         const fillPdf = async () => {
-            const mergedData = { ...data, username, email, signedBy: username, signedAt: new Date().toISOString(), exception: checkException };
-            const pdfBytes = await generateFilledPDF({ data: mergedData });
-            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const response = await axios.post(
+                "http://localhost:3003/getPDF",
+                { exception: checkException },
+                { responseType: 'blob' }
+            );
+
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+
             const url = URL.createObjectURL(blob);
             setPdfUrl(url);
         };
@@ -50,10 +55,8 @@ export function FillAndPreviewPDF({ username, email, data }: Props) {
                 `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
             );
             const geoData = await res.json();
-            console.log("address", geoData.address)
             return geoData.address.country_code;
-            console.log('Country:', geoData.address.country);
-            console.log('Region/State:', geoData.address.state);
+
         } catch (err) {
             console.error('Error in getting region from coords', err);
         }
@@ -90,10 +93,13 @@ export function FillAndPreviewPDF({ username, email, data }: Props) {
     const handleSign = async () => {
         setSigned(true)
         setDisplaySign(false)
+        const response = await axios.post(
+            "http://localhost:3003/getPDF",
+            { username, exception: checkException },
+            { responseType: 'blob' }
+        );
 
-        const mergedData = { ...data, username, email, signedBy: username, signedAt: new Date().toISOString(), exception: checkException };
-        const pdfBytes = await generateFilledPDF({ data: mergedData }); // 👈 wrap inside 'data'
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const blob = new Blob([response.data], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         setPdfUrl(url);
     };
@@ -109,10 +115,10 @@ export function FillAndPreviewPDF({ username, email, data }: Props) {
             ) : (
                 <p>Generating PDF preview...</p>
             )}
-            <div className='flex flex-col gap-2.5'>
+            <div className='flex flex-col gap-2.5 m-1'>
                 <div className="flex  items-center space-x-2">
                     <Checkbox id="terms" checked={checkException === 'false'}
-                        onCheckedChange={() => setException('false')} />
+                        onCheckedChange={() => { setException('false'); setDisableSign(false) }} />
                     <label
                         htmlFor="terms"
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -122,7 +128,7 @@ export function FillAndPreviewPDF({ username, email, data }: Props) {
                 </div>
                 <div className="flex  items-center space-x-2">
                     <Checkbox id="terms" checked={checkException === 'true'}
-                        onCheckedChange={() => setException('true')} />
+                        onCheckedChange={() => { setException('true'); setDisableSign(false) }} />
                     <label
                         htmlFor="terms"
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -133,7 +139,7 @@ export function FillAndPreviewPDF({ username, email, data }: Props) {
 
             </div>
             {displaySign &&
-                <Button onClick={handleSign}>Sign</Button>}
+                <Button onClick={handleSign} disabled={disableSign}>Sign</Button>}
 
             {
                 signed &&
