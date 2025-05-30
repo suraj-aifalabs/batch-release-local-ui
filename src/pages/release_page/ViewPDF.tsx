@@ -7,21 +7,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import { Checkbox } from "@/components/ui/checkbox"
 import axios from 'axios';
 
-interface Printer {
-    name: string;
-    [key: string]: any;
-}
-
 interface Props {
-    data: {
-        country: string;
-        [key: string]: any;
-    };
-    email: string;
     username: string;
 }
 
-export function FillAndPreviewPDF({ username, email, data }: Props) {
+export function FillAndPreviewPDF({ username }: Props) {
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const [signed, setSigned] = useState(false)
     const [displaySign, setDisplaySign] = useState(true)
@@ -46,31 +36,16 @@ export function FillAndPreviewPDF({ username, email, data }: Props) {
         return () => {
             if (pdfUrl) URL.revokeObjectURL(pdfUrl);
         };
-    }, [data, checkException]);
-
-
-    async function getRegionFromCoords(lat: number, lon: number): Promise<void> {
-        try {
-            const res = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
-            );
-            const geoData = await res.json();
-            return geoData.address.country_code;
-
-        } catch (err) {
-            console.error('Error in getting region from coords', err);
-        }
-    }
+    }, [checkException]);
 
 
 
     const handlePrint = async () => {
-        navigator.geolocation.getCurrentPosition(async (pos) => {
-            const { latitude, longitude } = pos.coords;
-            let regionCode = await getRegionFromCoords(latitude, longitude);
-            regionCode = typeof regionCode === 'string' ? regionCode.toUpperCase() : undefined;
+        navigator.geolocation.getCurrentPosition(async () => {
+            let regionCode = "US";
+            regionCode = typeof regionCode === 'string' ? regionCode?.toUpperCase() : "";
 
-            if (!regionCode || data.country?.toUpperCase() !== regionCode) {
+            if (!regionCode || "US" !== regionCode) {
                 toast.error("Cannot Print");
             } else {
                 const iframe = document.createElement('iframe');
@@ -113,7 +88,7 @@ export function FillAndPreviewPDF({ username, email, data }: Props) {
                     </Worker>
                 </div>
             ) : (
-                <p>Generating PDF preview...</p>
+                <p>Loading preview...</p>
             )}
             <div className='flex flex-col gap-2.5 m-1'>
                 <div className="flex  items-center space-x-2">
