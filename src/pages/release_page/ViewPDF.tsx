@@ -6,12 +6,14 @@ import { Button } from '@/components/ui/button';
 import { ToastContainer, toast } from 'react-toastify';
 import { Checkbox } from "@/components/ui/checkbox"
 import axios from 'axios';
+import { batchURL } from '@/services/apiCalls';
 
 interface Props {
     username: string;
+    email: string;
 }
 
-export function FillAndPreviewPDF({ username }: Props) {
+export function FillAndPreviewPDF({ username, email }: Props) {
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const [signed, setSigned] = useState(false)
     const [displaySign, setDisplaySign] = useState(true)
@@ -20,7 +22,7 @@ export function FillAndPreviewPDF({ username }: Props) {
     useEffect(() => {
         const fillPdf = async () => {
             const response = await axios.post(
-                "http://localhost:3003/getPDF",
+                batchURL,
                 { exception: checkException },
                 { responseType: 'blob' }
             );
@@ -69,8 +71,8 @@ export function FillAndPreviewPDF({ username }: Props) {
         setSigned(true)
         setDisplaySign(false)
         const response = await axios.post(
-            "http://localhost:3003/getPDF",
-            { username, exception: checkException },
+            batchURL,
+            { username, email, exception: checkException },
             { responseType: 'blob' }
         );
 
@@ -88,31 +90,34 @@ export function FillAndPreviewPDF({ username }: Props) {
                     </Worker>
                 </div>
             ) : (
-                <p>Loading preview...</p>
+                <div className="h-[80vh] w-full max-w-[830px] border border-gray-300 overflow-hidden mb-3 flex justify-center ">
+                    <p className='flex flex-col self-center'>Loading preview...</p>
+                </div>
             )}
-            <div className='flex flex-col gap-2.5 m-1'>
-                <div className="flex  items-center space-x-2">
-                    <Checkbox id="terms" checked={checkException === 'false'}
-                        onCheckedChange={() => { setException('false'); setDisableSign(false) }} />
-                    <label
-                        htmlFor="terms"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                        Release without Exception
-                    </label>
-                </div>
-                <div className="flex  items-center space-x-2">
-                    <Checkbox id="terms" checked={checkException === 'true'}
-                        onCheckedChange={() => { setException('true'); setDisableSign(false) }} />
-                    <label
-                        htmlFor="terms"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                        Release with Exception
-                    </label>
-                </div>
+            {displaySign &&
+                <div className='flex flex-col gap-2.5 m-1'>
+                    <div className="flex  items-center space-x-2">
+                        <Checkbox id="terms" checked={checkException === 'false'}
+                            onCheckedChange={() => { setException('false'); setDisableSign(false) }} />
+                        <label
+                            htmlFor="terms"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                            Release without Exception
+                        </label>
+                    </div>
+                    <div className="flex  items-center space-x-2">
+                        <Checkbox id="terms" checked={checkException === 'true'}
+                            onCheckedChange={() => { setException('true'); setDisableSign(false) }} />
+                        <label
+                            htmlFor="terms"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                            Release with Exception
+                        </label>
+                    </div>
 
-            </div>
+                </div>}
             {displaySign &&
                 <Button onClick={handleSign} disabled={disableSign}>Sign</Button>}
 

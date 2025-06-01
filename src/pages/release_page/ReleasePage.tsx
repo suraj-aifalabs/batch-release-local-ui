@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 const ReleasePage = () => {
     const location = useLocation()
-    const { username } = location.state || {}
+    const { username, email } = location.state || {}
     const [showPdfViewer, setShowPdfViewer] = useState(false);
     const [view, setView] = useState(true)
     const navigate = useNavigate()
@@ -35,6 +35,7 @@ const ReleasePage = () => {
                         <div style={{ display: 'flex', alignSelf: 'center', marginTop: '20px', justifyContent: 'center' }}>
                             <FillAndPreviewPDF
                                 username={username}
+                                email={email}
                             />
                         </div>
                     )
