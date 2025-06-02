@@ -11,6 +11,11 @@ interface AuthActionPayload {
     action: string;
 }
 
+interface PdfPayload {
+    exception: boolean;
+    sign: boolean;
+}
+
 
 export const fetchUsers = createAsyncThunk("/auth/getUsers", async ({ pageNo, pageSize }: { pageNo: number; pageSize: number }) => {
     try {
@@ -27,6 +32,18 @@ export const fetchUsers = createAsyncThunk("/auth/getUsers", async ({ pageNo, pa
 export const authAction = async (data: AuthActionPayload) => {
     try {
         const response = await axiosInstance.post("/auth/authAction", data);
+        return response.data;
+    } catch (error) {
+        const axiosError = error as AxiosError<ErrorResponse>;
+        if (axiosError.response) {
+            return axiosError.response;
+        }
+    }
+};
+
+export const getPDF = async (data: PdfPayload) => {
+    try {
+        const response = await axiosInstance.post("document/get_batch_certificate", data, { responseType: 'blob' });
         return response.data;
     } catch (error) {
         const axiosError = error as AxiosError<ErrorResponse>;

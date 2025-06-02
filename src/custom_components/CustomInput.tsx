@@ -59,7 +59,7 @@ export function CustomInput({
 
     return (
         <div>
-            {showLabel && <CustomLabel className="px-2 mb-2" labelName={labelName} />}
+            {showLabel && <CustomLabel className="px-2 mb-2" labelName={labelName} htmlFor={id} />}
             <div className="relative">
                 <Input
                     id={id}
@@ -69,12 +69,14 @@ export function CustomInput({
                     className={`${className} h-11 my-1 rounded-md bg-transparent focus-visible:ring-1 disabled:cursor-not-allowed focus-visible:ring-blue-700 w-full pr-12`}
                     {...inputProps}
                     {...props}
+                    data-testid={id}
                 />
                 {isPasswordField && (
                     <button
                         type="button"
                         onClick={togglePasswordVisibility}
                         className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-700 p-1.5 rounded-full transition-colors focus:outline-none"
+                        data-testid="toggle-password"
                     >
                         {showPassword ? (
                             <EyeOff className="h-4 w-4" />
@@ -85,13 +87,13 @@ export function CustomInput({
                 )}
                 {isSearchField && (
                     <div className="absolute right-2 cursor-pointer top-1/2 -translate-y-1/2 text-gray-700 p-1.5 rounded-full transition-colors focus:outline-none">
-                        <Search className="h-5 w-5" />
+                        <Search className="h-5 w-5" data-testid="search-icon" />
                     </div>
                 )}
                 {showInfo && (
                     <div className="relative group">
-                        <div className="absolute cursor-pointer right-2 bottom-[-2px] -translate-y-1/2 text-gray-700 p-1.5 rounded-full transition-colors focus:outline-none">
-                            <Info className="h-4 w-4" />
+                        <div className="absolute cursor-pointer right-2 bottom-[-2px] -translate-y-1/2 text-gray-700 p-1.5 rounded-full transition-colors focus:outline-none" data-testid="info-icon">
+                            <Info className="h-4 w-4" aria-label="Info" />
                         </div>
                         {infoMessage && <div className="absolute hidden group-hover:block right-2 top-[-60px] -translate-y-1/2 bg-white border border-gray-200 shadow-md text-sm px-2 py-1 rounded-md whitespace-nowrap">
                             {infoMessage}

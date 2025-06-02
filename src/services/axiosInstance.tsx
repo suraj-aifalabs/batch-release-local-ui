@@ -1,5 +1,6 @@
 import axios from "axios";
 import { baseURL } from "./apiCalls.tsx";
+import { getIdTokenFromCookie } from "../utils/cookieUtils.tsx";
 
 const axiosInstance = axios.create({
     baseURL: baseURL,
@@ -7,7 +8,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        const token = sessionStorage.getItem("msal_id_token");
+        const token = getIdTokenFromCookie();
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -21,7 +22,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response && error.response?.data?.message === "Session Expired") {
+        if (error.response && error.response?.data?.isActiveSession === false && error.response?.data?.message === "Session expired") {
             sessionStorage.clear();
             window.location.href = "/session-expired";
         }

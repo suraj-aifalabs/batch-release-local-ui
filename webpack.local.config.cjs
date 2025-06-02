@@ -33,11 +33,7 @@ const extraConfig = merge(commonConfig, {
         }),
         new webpack.DefinePlugin({
             "process.env": JSON.stringify({
-                API_URL: "http://localhost:3003/api",
-                CLIENTID: "31775f70-xxxx-xxxx-xxxx-6exxxxxxxxxx",
-                AUTHORITY_URL: "https://login.microsoftonline.com/3ff7d35e-xxxx-xxxx-xxxx-dfxxxxxxxxxx",
-                REDIRECTURI: "http://localhost:5176/",
-                POSTLOGOUTREDIRECTURI: "http://localhost:5176/"
+                API_URL: "http://localhost:3003",
             }),
         }),
     ],
