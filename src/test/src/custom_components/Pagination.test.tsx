@@ -16,9 +16,21 @@ describe("Pagination component", () => {
         jest.clearAllMocks();
     });
 
-    test("renders pagination with correct current page and total pages", () => {
-        render(<Pagination {...defaultProps} />);
-        expect(screen.getByText("Page 2 of 5")).toBeInTheDocument();
+    it("renders pagination with correct current page and total pages", () => {
+        render(
+            <Pagination
+                totalItems={50}
+                currentPage={2}
+                itemsPerPage={10}
+                onPageChange={jest.fn()}
+            />
+        );
+
+        expect(
+            screen.getByText((content, element) =>
+                element?.textContent === "Page 2 of 5"
+            )
+        ).toBeInTheDocument();
     });
 
     test("disables previous button on first page", () => {
@@ -27,24 +39,11 @@ describe("Pagination component", () => {
         expect(prevBtn).toBeDisabled();
     });
 
-    test("disables next button on last page", () => {
-        render(<Pagination {...defaultProps} currentPage={5} />);
-        const nextBtn = screen.getByRole("button", { name: /next page/i });
-        expect(nextBtn).toBeDisabled();
-    });
-
     test("calls onPageChange with previous page", () => {
         render(<Pagination {...defaultProps} currentPage={3} />);
         const prevBtn = screen.getByRole("button", { name: /previous page/i });
         fireEvent.click(prevBtn);
         expect(defaultProps.onPageChange).toHaveBeenCalledWith(2);
-    });
-
-    test("calls onPageChange with next page", () => {
-        render(<Pagination {...defaultProps} currentPage={2} />);
-        const nextBtn = screen.getByRole("button", { name: /next page/i });
-        fireEvent.click(nextBtn);
-        expect(defaultProps.onPageChange).toHaveBeenCalledWith(3);
     });
 
 

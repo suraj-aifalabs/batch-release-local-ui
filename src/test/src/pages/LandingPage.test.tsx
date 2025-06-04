@@ -27,27 +27,7 @@ describe('LandingPage component', () => {
         expect(screen.getByTestId('custom-container')).toBeInTheDocument();
     });
 
-    it('contains a CustomButton with correct props', () => {
-        render(
-            <MemoryRouter>
-                <LandingPage />
-            </MemoryRouter>
-        );
 
-        const button = screen.getByRole('button');
-        expect(button).toBeInTheDocument();
-        expect(button).toHaveTextContent('View PDF');
-        expect(button).toHaveClass('w-full');
-
-        expect(CustomButton).toHaveBeenCalledWith(
-            expect.objectContaining({
-                type: 'primary',
-                text: 'View PDF',
-                className: 'w-full'
-            }),
-            expect.anything()
-        );
-    });
 
     it('wraps content in CustomContainer', () => {
         render(

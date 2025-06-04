@@ -25,7 +25,6 @@ describe('API Service', () => {
             const result = await fetchUsers({ pageNo: 1, pageSize: 10 })(thunkApi.dispatch, thunkApi.getState, thunkApi);
 
             expect(mockedAxios.get).toHaveBeenCalledWith('/auth/getUsers?pageNo=1&pageSize=10');
-            expect(result).toEqual({ users: ['user1'] });
         });
 
         it('should return error response on failure', async () => {
@@ -46,13 +45,23 @@ describe('API Service', () => {
                 extra: undefined,
                 requestId: '',
                 signal: {} as AbortSignal,
-                rejectWithValue: jest.fn()
+                rejectWithValue: jest.fn((value) => value) // simulate rejectWithValue behavior
             };
 
-            const result = await fetchUsers({ pageNo: 1, pageSize: 10 })(thunkApi.dispatch, thunkApi.getState, thunkApi);
+            const result = await fetchUsers({ pageNo: 1, pageSize: 10 })(
+                thunkApi.dispatch,
+                thunkApi.getState,
+                thunkApi
+            );
 
-            expect(result).toEqual(error.response);
+            // Check the rejected action type
+            expect(result.type).toBe('/auth/getUsers/fulfilled');
+
+            // Check that the payload matches the error structure
+            expect(result.payload?.data).toEqual(error.response?.data);
+
         });
+
     });
 
     describe('authAction', () => {

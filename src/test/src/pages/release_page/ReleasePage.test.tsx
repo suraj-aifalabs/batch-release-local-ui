@@ -1,11 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ReleasePage from '@/pages/release_page/ReleasePage';
-import { FillAndPreviewPDF } from '@/pages/release_page/ViewPDF';
+import ViewPdf from '@/pages/release_page/ViewPDF';
 
 jest.mock('@/pages/release_page/ViewPDF', () => ({
-    FillAndPreviewPDF: jest.fn(() => <div data-testid="fill-preview-mock">Mock FillAndPreviewPDF</div>)
+    __esModule: true,
+    default: jest.fn(() => <div data-testid="fill-preview-mock">Mock FillAndPreviewPDF</div>)
 }));
+
 
 describe('ReleasePage component', () => {
     it('renders without crashing', () => {
@@ -15,7 +17,7 @@ describe('ReleasePage component', () => {
 
     it('renders the FillAndPreviewPDF component', () => {
         render(<ReleasePage />);
-        expect(FillAndPreviewPDF).toHaveBeenCalled();
+        expect(ViewPdf).toHaveBeenCalled();
     });
 
     it('has correct layout structure', () => {

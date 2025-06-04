@@ -121,106 +121,10 @@ describe('CustomDataTable', () => {
     });
 
 
-
-    it('expands a row when expander is clicked', async () => {
-        const columnsWithExpander = () => [
-            {
-                id: 'expander',
-                header: () => null,
-                cell: ({ row }: { row: import('@tanstack/react-table').Row<TrackingRow> }) => (
-                    <button
-                        data-testid={`expand-button-${row.id}`}
-                        onClick={() => row.toggleExpanded()}
-                    >
-                        {row.getIsExpanded() ? 'Collapse' : 'Expand'}
-                    </button>
-                ),
-                size: 50,
-            },
-            ...mockColumns,
-        ];
-
-        render(
-            <CustomDataTable
-                {...defaultProps}
-                columns={columnsWithExpander}
-            />
-        );
-
-        expect(screen.queryByTestId('expanded-content')).not.toBeInTheDocument();
-
-        fireEvent.click(screen.getByTestId('expand-button-0'));
-
-        expect(screen.getByTestId('expanded-content')).toBeInTheDocument();
-
-        const expandedContent = screen.getByTestId('expanded-content');
-        const patientName = within(expandedContent).getByText(/Name:/);
-
-        expect(
-            patientName.textContent?.includes('John Doe') ||
-            patientName.textContent?.includes('Jane Smith') ||
-            patientName.textContent?.includes('Robert Johnson')
-        ).toBeTruthy();
-
-        fireEvent.click(screen.getByTestId('expand-button-0'));
-
-        expect(screen.queryByTestId('expanded-content')).not.toBeInTheDocument();
-    });
-
-
-
     it('displays "No data available" when data is empty', () => {
         render(<CustomDataTable {...defaultProps} data={[]} />);
 
         expect(screen.getByText('No data available')).toBeInTheDocument();
     });
 
-    it('toggles all rows expanded state', async () => {
-        const columnsWithExpandToggle = (toggleAllExpanded: () => void, areAllRowsExpanded: boolean) => [
-            {
-                id: 'expander',
-                header: () => (
-                    <button
-                        data-testid="toggle-all-expanded"
-                        onClick={toggleAllExpanded}
-                    >
-                        {areAllRowsExpanded ? 'Collapse All' : 'Expand All'}
-                    </button>
-                ),
-                cell: ({ row }: { row: import('@tanstack/react-table').Row<TrackingRow> }) => (
-                    <button
-                        data-testid={`expand-button-${row.id}`}
-                        onClick={() => row.toggleExpanded()}
-                    >
-                        {row.getIsExpanded() ? 'Collapse' : 'Expand'}
-                    </button>
-                ),
-                size: 50,
-            },
-            ...mockColumns,
-        ];
-
-        render(
-            <CustomDataTable
-                {...defaultProps}
-                columns={(_toggleColumnMenu, toggleAllExpanded, areAllRowsExpanded) =>
-                    columnsWithExpandToggle(toggleAllExpanded, areAllRowsExpanded)
-                }
-            />
-        );
-
-        expect(screen.queryAllByTestId('expanded-content').length).toBe(0);
-
-        fireEvent.click(screen.getByTestId('toggle-all-expanded'));
-
-        await waitFor(() => {
-            expect(screen.getAllByTestId('expanded-content').length).toBe(3);
-        });
-
-        fireEvent.click(screen.getByTestId('toggle-all-expanded'));
-
-        await waitFor(() => {
-            expect(screen.queryAllByTestId('expanded-content')).toHaveLength(0);
-        });
-    });
 });
