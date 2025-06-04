@@ -1,4 +1,4 @@
-import { FillAndPreviewPDF } from './ViewPdf';
+import ViewPdf from './ViewPdf';
 
 const ReleasePage = () => {
 
@@ -6,7 +6,7 @@ const ReleasePage = () => {
         <div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignSelf: 'center', marginTop: '20px', justifyContent: 'center' }}>
-                    <FillAndPreviewPDF />
+                    <ViewPdf />
                 </div>
             </div >
         </div>

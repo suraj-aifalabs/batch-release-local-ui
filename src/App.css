@@ -1,0 +1,17 @@
+@font-face {
+    font-family: "J&JRegular";
+    src: url("./assets/fonts/JohnsonDisplay-Regular.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "J&JText";
+    src: url("./assets/fonts/JohnsonText-Regular.otf") format("opentype");
+}
+
+body {
+    font-family: "J&JRegular", sans-serif;
+}
+
+.font-jj {
+    font-family: "J&JText", sans-serif;
+}
