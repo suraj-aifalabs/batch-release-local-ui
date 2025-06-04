@@ -14,6 +14,7 @@ interface AuthActionPayload {
 interface PdfPayload {
     exception: boolean;
     sign: boolean;
+    batchNumber: string;
 }
 
 

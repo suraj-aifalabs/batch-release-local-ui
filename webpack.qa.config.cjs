@@ -15,6 +15,8 @@ const extraConfig = merge(commonConfig, {
             filename: "remoteEntry.js",
             exposes: {
                 "./App": "./src/App.tsx",
+                './QCManagement': './src/pages/config/QCManagement.tsx',
+                './ViewPdf': './src/pages/release_page/ViewPdf.tsx',
             },
             shared: {
                 react: {
