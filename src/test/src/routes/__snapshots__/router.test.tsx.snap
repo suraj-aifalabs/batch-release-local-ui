@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Router Configuration should match snapshot of router configuration 1`] = `
+[
+  {
+    "children": undefined,
+    "element": {
+      "$$typeof": Symbol(react.transitional.element),
+      "_owner": null,
+      "_store": {},
+      "key": null,
+      "props": {
+        "replace": true,
+        "to": "/setting",
+      },
+      "type": [Function],
+    },
+    "hasErrorBoundary": false,
+    "id": "0",
+    "path": "/",
+  },
+  {
+    "children": [
+      {
+        "element": {
+          "$$typeof": Symbol(react.transitional.element),
+          "_owner": null,
+          "_store": {},
+          "key": null,
+          "props": {},
+          "type": [Function],
+        },
+        "hasErrorBoundary": false,
+        "id": "1-0",
+        "index": true,
+      },
+      {
+        "children": undefined,
+        "element": {
+          "$$typeof": Symbol(react.transitional.element),
+          "_owner": null,
+          "_store": {},
+          "key": null,
+          "props": {},
+          "type": [Function],
+        },
+        "hasErrorBoundary": false,
+        "id": "1-1",
+        "path": "release",
+      },
+    ],
+    "element": {
+      "$$typeof": Symbol(react.transitional.element),
+      "_owner": null,
+      "_store": {},
+      "key": null,
+      "props": {},
+      "type": [Function],
+    },
+    "hasErrorBoundary": false,
+    "id": "1",
+    "path": "/setting",
+  },
+]
+`;

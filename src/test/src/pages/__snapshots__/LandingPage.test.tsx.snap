@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LandingPage component matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="custom-container"
+  >
+    <div
+      class="flex flex-col justify-center h-[90dvh] gap-4 items-center w-full"
+    >
+      <a
+        data-discover="true"
+        href="/setting/release"
+      >
+        <button
+          class="w-full"
+          type="primary"
+        >
+          View PDF
+        </button>
+      </a>
+    </div>
+  </div>
+</DocumentFragment>
+`;

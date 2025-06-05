@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReleasePage component matches snapshot 1`] = `
+<DocumentFragment>
+  <div>
+    <div
+      style="display: flex; flex-direction: column; gap: 20px; justify-content: space-between;"
+    >
+      <div
+        style="display: flex; align-self: center; margin-top: 20px; justify-content: center;"
+      >
+        <div
+          data-testid="fill-preview-mock"
+        >
+          Mock FillAndPreviewPDF
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
