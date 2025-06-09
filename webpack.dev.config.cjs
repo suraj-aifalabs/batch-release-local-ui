@@ -7,7 +7,7 @@ const deps = require("./package.json").dependencies;
 const extraConfig = merge(commonConfig, {
     mode: "development",
     output: {
-        publicPath: "http://localhost:5176/",
+        publicPath: "https://batch.atara-dev.apps.jnj.com/",
     },
     plugins: [
         new ModuleFederationPlugin({
@@ -35,7 +35,7 @@ const extraConfig = merge(commonConfig, {
         }),
         new webpack.DefinePlugin({
             "process.env": JSON.stringify({
-                API_URL: "http://localhost:3003/api",
+                API_URL: "https://batch.atara-dev.apps.jnj.com/api/batch",
             }),
         }),
     ],

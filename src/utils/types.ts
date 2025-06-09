@@ -8,12 +8,7 @@ export interface TrackingRow {
   patientName: string;
   patientDOB: string;
   patientWeight: string;
-  cquenceOrderId: string;
-  country: string;
   coicBagId: string;
-  batchNumber: string;
-  createdAt: string;
-  updatedAt: string;
   __v: number;
   pccNumber: string;
   totalVolume: string;
@@ -22,4 +17,13 @@ export interface TrackingRow {
   nameAndAddress: string;
   productNDC: string;
   expirationDate: string;
+  data_cart_order_id: string;
+  associated_country: string;
+  batch_id: string;
+  created_at: string;
+  updated_at: string;
+  materialId: string;
+  lastStatus: string;
+  tentativeReleaseDate: string;
+  materialNumber: string;
 }

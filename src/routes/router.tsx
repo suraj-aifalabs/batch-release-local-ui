@@ -1,8 +1,8 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import Layout from '../pages/Layout'
 import LandingPage from '../pages/LandingPage'
-import ReleasePage from '@/pages/release_page/ReleasePage'
-import QCManagement from '@/pages/config/QCManagement'
+import ReleasePage from '../pages/release_page/ReleasePage'
+import QCManagement from '../pages/config/QCManagement'
 
 export const router = createBrowserRouter([
     {

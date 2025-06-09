@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Checkbox } from "@/components/ui/checkbox"
 import { getPDF } from '@/services/apiService';
 import CustomButton from '@/custom_components/CustomButton';
@@ -68,14 +68,14 @@ const ViewPdf = ({ batchNumber = "" }) => {
     };
 
     return (
-        <div className="flex h-full flex-col w-[800px]">
-            <div className="">
+        <div className="flex h-[100%] flex-col justify-between gap-6 w-[800px]">
+            <div className="h-[450px]">
                 {isLoading ? (
-                    <p>Loading document...</p>
+                    <p className="h-[450px] flex justify-center items-center">Loading document...</p>
                 ) : (
                     <div className="h-[440px]">
                         <iframe
-                            src={pdfUrl}
+                            src={pdfUrl ?? undefined}
                             width="100%"
                             height="440px"
                             title="PDF Preview"
@@ -122,27 +122,31 @@ const ViewPdf = ({ batchNumber = "" }) => {
             )}
 
             {displaySign && (
-                <CustomButton
-                    className='w-32'
-                    type="default"
-                    text={isLoading ? 'Signing...' : 'Sign'}
-                    onClick={handleSign}
-                    disabled={isLoading}
-                    icon={<></>}
-                >
-                </CustomButton>
+                <div className=" w-32">
+                    <CustomButton
+                        className='w-32'
+                        type="default"
+                        text={isLoading ? 'Signing...' : 'Sign'}
+                        onClick={handleSign}
+                        disabled={isLoading}
+                        icon={<></>}
+                    >
+                    </CustomButton>
+                </div>
             )}
 
             {signed && (
-                <CustomButton
-                    className='w-32'
-                    type="default"
-                    text='Print'
-                    onClick={() => handlePrint()}
-                    disabled={isLoading}
-                    icon={<></>}
-                >
-                </CustomButton>
+                <div className="mt-4 w-32">
+                    <CustomButton
+                        className='w-32'
+                        type="default"
+                        text='Print'
+                        onClick={() => handlePrint()}
+                        disabled={isLoading}
+                        icon={<></>}
+                    >
+                    </CustomButton>
+                </div>
             )}
         </div>
     );

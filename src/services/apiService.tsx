@@ -53,3 +53,15 @@ export const getPDF = async (data: PdfPayload) => {
         }
     }
 };
+
+export const uploadQCTemplate = async (data: FormData) => {
+    try {
+        const response = await axiosInstance.post("/document/upload", data);
+        return response.data;
+    } catch (error) {
+        const axiosError = error as AxiosError<ErrorResponse>;
+        if (axiosError.response) {
+            return axiosError.response;
+        }
+    }
+};
