@@ -4,7 +4,7 @@ import CustomDataTable from '@/custom_components/CustomDataTable';
 import { TrackingRow } from '@/utils/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { mockData, localStorageMock } from '../__mocks__/mockData';
-
+import userEvent from '@testing-library/user-event';
 jest.mock('@remixicon/react', () => ({
     RiArrowUpSLine: () => <div data-testid="arrow-up-icon" />,
     RiArrowDownSLine: () => <div data-testid="arrow-down-icon" />,
@@ -125,6 +125,37 @@ describe('CustomDataTable', () => {
         render(<CustomDataTable {...defaultProps} data={[]} />);
 
         expect(screen.getByText('No data available')).toBeInTheDocument();
+    });
+
+    it('calls onSortChange when a sortable header is clicked', async () => {
+        const user = userEvent.setup();
+        render(<CustomDataTable {...defaultProps} />);
+
+        const sortableHeader = screen.getByText('Patient Name');
+        await user.click(sortableHeader);
+
+        expect(mockOnSortChange).toHaveBeenCalledWith('patientName', 'asc');
+    });
+
+
+
+    it('calls onPageChange when next page is clicked', async () => {
+        const user = userEvent.setup();
+        render(<CustomDataTable {...defaultProps} currentPage={1} />);
+
+        const nextBtn = screen.getByRole('button', { name: /next page/i });
+        await user.click(nextBtn);
+
+        expect(mockOnPageChange).toHaveBeenCalledWith(2);
+    });
+
+
+    it('updates sorting state when initialSorting prop changes', () => {
+        const { rerender } = render(<CustomDataTable {...defaultProps} />);
+
+        rerender(<CustomDataTable {...defaultProps} initialSorting={[{ id: 'stage', desc: false }]} />);
+
+
     });
 
 });
