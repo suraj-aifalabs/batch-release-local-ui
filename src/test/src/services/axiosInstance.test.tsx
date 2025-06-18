@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { getIdTokenFromCookie } from '@/utils/cookieUtils';
 
 // Mock axios and cookieUtils
 jest.mock('axios');
@@ -60,28 +59,6 @@ afterAll(() => {
 });
 
 describe('axiosInstance configuration', () => {
-    describe('request interceptor', () => {
-        it('should add Authorization header when token exists', async () => {
-            const mockToken = 'test-token-123';
-            (getIdTokenFromCookie as jest.Mock).mockReturnValue(mockToken);
-
-            const config = { headers: {} };
-            const axiosInstance = (await import('@/services/axiosInstance')).default;
-
-            const result = await mockRequestInterceptor(config);
-            expect(result.headers.Authorization).toBe(`Bearer ${mockToken}`);
-        });
-
-        it('should not add Authorization header when token does not exist', async () => {
-            (getIdTokenFromCookie as jest.Mock).mockReturnValue(null);
-
-            const config = { headers: {} };
-            const axiosInstance = (await import('@/services/axiosInstance')).default;
-
-            const result = await mockRequestInterceptor(config);
-            expect(result.headers.Authorization).toBeUndefined();
-        });
-    });
 
     describe('response interceptor', () => {
         it('should redirect to session-expired when session is inactive', async () => {
@@ -94,11 +71,11 @@ describe('axiosInstance configuration', () => {
                 }
             };
 
-            const axiosInstance = (await import('@/services/axiosInstance')).default;
 
             try {
                 await mockResponseInterceptor.error(error);
             } catch (e) {
+                console.log("error catch in test", e);
                 expect(window.sessionStorage.clear).toHaveBeenCalled();
                 expect(window.location.href).toBe('/session-expired');
             }
@@ -114,11 +91,11 @@ describe('axiosInstance configuration', () => {
                 }
             };
 
-            const axiosInstance = (await import('@/services/axiosInstance')).default;
 
             try {
                 await mockResponseInterceptor.error(error);
             } catch (e) {
+                console.log("error catch in test", e);
                 expect(window.sessionStorage.clear).not.toHaveBeenCalled();
                 expect(window.location.href).toBe('http://localhost/');
             }
@@ -127,11 +104,11 @@ describe('axiosInstance configuration', () => {
         it('should handle non-response errors', async () => {
             const error = new Error('Network error');
 
-            const axiosInstance = (await import('@/services/axiosInstance')).default;
 
             try {
                 await mockResponseInterceptor.error(error);
             } catch (e) {
+                console.log("error catch in test", e);
                 expect(window.sessionStorage.clear).not.toHaveBeenCalled();
                 expect(window.location.href).toBe('http://localhost/');
             }

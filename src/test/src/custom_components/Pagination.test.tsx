@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import Pagination from "@/custom_components/Pagination";
 import '@testing-library/jest-dom';
-import userEvent from "@testing-library/user-event";
+
 describe("Pagination component", () => {
     const defaultProps = {
         totalPages: 5,

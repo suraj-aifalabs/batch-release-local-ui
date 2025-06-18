@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, fireEvent, screen, act } from '@testing-library/react';
-import { FileUploader, FileUploaderContent, FileUploaderItem, FileInput } from '@/components/ui/FileUploader';
+import { render, act } from '@testing-library/react';
+import { FileUploader, FileUploaderContent, FileInput } from '@/components/ui/FileUploader';
 import { useDropzone } from 'react-dropzone';
 import { toast } from 'sonner';
 
@@ -37,7 +37,6 @@ describe('FileUploader', () => {
 
     it('handles file drop', () => {
         const mockFile = new File(['content'], 'test.jpg', { type: 'image/jpeg' });
-        const mockDropzoneOnDrop = jest.fn();
 
         (useDropzone as jest.Mock).mockImplementation(({ onDrop }) => {
             mockDropzoneState.onDrop = onDrop;

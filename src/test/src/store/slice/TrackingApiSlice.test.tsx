@@ -1,7 +1,4 @@
-import { getIdTokenFromCookie } from '@/utils/cookieUtils';
 import { trackingApi } from '@/store/slice/TrackingApiSlice';
-import { waitFor } from '@testing-library/react';
-import { setupApiStore } from '@/test/src/store/slice/test-utils';
 import { baseURL } from '@/services/apiCalls';
 
 jest.mock('@/utils/cookieUtils', () => ({
@@ -17,7 +14,6 @@ global.fetch = jest.fn();
 const mockFetch = fetch as jest.Mock;
 
 describe('trackingApi', () => {
-    const storeRef = setupApiStore(trackingApi);
 
     beforeEach(() => {
         jest.clearAllMocks();
