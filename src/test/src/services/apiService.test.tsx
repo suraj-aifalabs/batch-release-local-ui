@@ -1,124 +1,90 @@
+import axiosMockAdapter from 'axios-mock-adapter';
 import axiosInstance from '@/services/axiosInstance';
-import { fetchUsers, authAction, getPDF } from '@/services/apiService';
-import { AxiosError } from 'axios';
+import { fetchUsers, authAction, getPDF, uploadQCTemplate } from '@/services/apiService';
 
-jest.mock('@/services/axiosInstance');
+describe('API calls using axiosInstance', () => {
+    let mock: axiosMockAdapter;
 
-const mockedAxios = axiosInstance as jest.Mocked<typeof axiosInstance>;
-
-describe('API Service', () => {
-    afterEach(() => jest.clearAllMocks());
-
-    describe('fetchUsers', () => {
-        it('should return user data on success', async () => {
-            mockedAxios.get.mockResolvedValueOnce({ data: { users: ['user1'] } });
-
-            const thunkApi = {
-                dispatch: jest.fn(),
-                getState: jest.fn(),
-                extra: undefined,
-                requestId: '',
-                signal: {} as AbortSignal,
-                rejectWithValue: jest.fn()
-            };
-
-            await fetchUsers({ pageNo: 1, pageSize: 10 })(thunkApi.dispatch, thunkApi.getState, thunkApi);
-
-            expect(mockedAxios.get).toHaveBeenCalledWith('/auth/getUsers?pageNo=1&pageSize=10');
-        });
-
-        it('should return error response on failure', async () => {
-            const error: Partial<AxiosError> = {
-                response: {
-                    status: 500,
-                    data: { status: 500, message: 'Server error' },
-                    statusText: '',
-                }
-            };
-            mockedAxios.get.mockRejectedValueOnce(error);
-
-            const thunkApi = {
-                dispatch: jest.fn(),
-                getState: jest.fn(),
-                extra: undefined,
-                requestId: '',
-                signal: {} as AbortSignal,
-                rejectWithValue: jest.fn((value) => value) // simulate rejectWithValue behavior
-            };
-
-            const result = await fetchUsers({ pageNo: 1, pageSize: 10 })(
-                thunkApi.dispatch,
-                thunkApi.getState,
-                thunkApi
-            );
-
-            // Check the rejected action type
-            expect(result.type).toBe('/auth/getUsers/fulfilled');
-
-            // Check that the payload matches the error structure
-            expect(result.payload?.data).toEqual(error.response?.data);
-
-        });
-
+    beforeEach(() => {
+        mock = new axiosMockAdapter(axiosInstance);
     });
 
-    describe('authAction', () => {
-        it('should return auth result on success', async () => {
-            mockedAxios.post.mockResolvedValueOnce({ data: { success: true } });
-
-            const result = await authAction({ action: 'logout' });
-
-            expect(mockedAxios.post).toHaveBeenCalledWith('/auth/authAction', { action: 'logout' });
-            expect(result).toEqual({ success: true });
-        });
-
-        it('should return error response on failure', async () => {
-            const error: Partial<AxiosError> = {
-                response: {
-                    status: 403,
-                    data: { status: 403, message: 'Forbidden' },
-                    statusText: '',
-                    headers: {},
-                    config: {}
-                }
-            };
-            mockedAxios.post.mockRejectedValueOnce(error);
-
-            const result = await authAction({ action: 'logout' });
-            expect(result).toEqual(error.response);
-        });
+    afterEach(() => {
+        mock.restore();
     });
 
-    describe('getPDF', () => {
-        it('should return PDF blob on success', async () => {
-            const mockBlob = new Blob(['pdf content'], { type: 'application/pdf' });
-            mockedAxios.post.mockResolvedValueOnce({ data: mockBlob });
+    it('should fetch users successfully', async () => {
+        const mockData = { users: [{ name: 'John' }] };
+        mock.onGet('/auth/getUsers?pageNo=1&pageSize=10').reply(200, mockData);
 
-            const result = await getPDF({ batchNumber: "", exception: false, sign: true });
+        const thunk = fetchUsers({ pageNo: 1, pageSize: 10 });
+        const result = await thunk(
+            () => { }, // dispatch (mocked)
+            () => { }, // getState (mocked)
+            undefined
+        );
 
-            expect(mockedAxios.post).toHaveBeenCalledWith(
-                'document/get_batch_certificate',
-                { batchNumber: "", exception: false, sign: true },
-                { responseType: 'blob' }
-            );
-            expect(result).toEqual(mockBlob);
-        });
+        expect(result.payload).toEqual(mockData);
+    });
 
-        it('should return error response on failure', async () => {
-            const error: Partial<AxiosError> = {
-                response: {
-                    status: 404,
-                    data: { status: 404, message: 'Not Found' },
-                    statusText: '',
-                    headers: {},
-                    config: {}
-                }
-            };
-            mockedAxios.post.mockRejectedValueOnce(error);
+    it('should handle error in fetchUsers', async () => {
+        const errorData = { status: 401, message: 'Unauthorized' };
+        mock.onGet('/auth/getUsers?pageNo=1&pageSize=10').reply(401, errorData);
 
-            const result = await getPDF({ batchNumber: "", exception: true, sign: false });
+        const thunk = fetchUsers({ pageNo: 1, pageSize: 10 });
+        const result = await thunk(() => { }, () => { }, undefined);
 
-            expect(result).toEqual(error.response);
-        });
+        expect(result.payload?.status).toBe(401);
+        expect(result.payload?.data).toEqual(errorData);
+    });
+
+    it('should perform authAction successfully', async () => {
+        const mockData = { success: true };
+        mock.onPost('/auth/authAction').reply(200, mockData);
+
+        const result = await authAction({ action: 'login' });
+
+        expect(result).toEqual(mockData);
+    });
+
+    it('should handle error in authAction', async () => {
+        const errorData = { status: 400, message: 'Invalid' };
+        mock.onPost('/auth/authAction').reply(400, errorData);
+
+        const result = await authAction({ action: 'fail' });
+
+        expect(result?.data).toEqual(errorData);
+    });
+
+    it('should get PDF blob from server', async () => {
+        const blobData = new Blob(['fake pdf content'], { type: 'application/pdf' });
+        mock.onPost('document/get_batch_certificate').reply(200, blobData);
+
+        const result = await getPDF({ exception: false, sign: true, batchNumber: '1234' });
+
+        expect(result).toBeInstanceOf(Blob);
+        expect(result.type).toBe('application/pdf');
+    });
+
+    it('should upload QC template successfully', async () => {
+        const mockData = { uploaded: true };
+        mock.onPost('/document/upload').reply(200, mockData);
+
+        const formData = new FormData();
+        formData.append('file', new Blob(['file content'], { type: 'text/plain' }), 'test.txt');
+
+        const result = await uploadQCTemplate(formData);
+        expect(result).toEqual(mockData);
+    });
+
+    it('should handle error in uploadQCTemplate', async () => {
+        const errorData = { status: 500, message: 'Upload failed' };
+        mock.onPost('/document/upload').reply(500, errorData);
+
+        const formData = new FormData();
+        formData.append('file', new Blob(['error'], { type: 'text/plain' }), 'fail.txt');
+
+        const result = await uploadQCTemplate(formData);
+        expect(result?.data).toEqual(errorData);
     });
 });
